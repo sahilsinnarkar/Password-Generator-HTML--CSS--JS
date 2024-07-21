@@ -1,8 +1,8 @@
 const inputSlider = document.querySelector("[data-lengthSlider]");
 const lengthDisplay = document.querySelector("[data-lengthNumber]");
 const passwordDisplay = document.querySelector("[data-passwordDisplay]");
-const copyBtn = document.querySelector("[data-copy");
-const copyMsg = document.querySelector("[data-copyMsg");
+const copyBtn = document.querySelector("[data-copy]");
+const copyMsg = document.querySelector("[data-copyMsg]");
 const uppercaseCheck = document.querySelector("#uppercase");
 const lowercaseCheck = document.querySelector("#lowercase");
 const numbersCheck = document.querySelector("#numbers");
@@ -17,17 +17,22 @@ let passwordLength = 10;
 let checkCount = 0;
 handleSlider();
 // set strength circle color to grey
+setIndicator("#ccc");
 
 
 // set password length
 function handleSlider() {
     inputSlider.value = passwordLength;
     lengthDisplay.innerText = passwordLength;
+    const min = inputSlider.min;
+    const max = inputSlider.max;
+    inputSlider.style.backgroundSize = ((passwordLength - min) * 100 / (max - min)) + "% 100%";
 }
 
 function setIndicator(color) {
     indicator.style.backgroundColor = color;
     // shadow
+    indicator.style.boxShadow = `0px 0px 12px 1px ${color}`;
 }
 
 function getRndInteger(min, max) {
@@ -78,13 +83,13 @@ async function copyContent() {
     // to make copy span visible
     copyMsg.classList.add("active");
     setTimeout(() => {
-       copyMsg.classList.remove("active"); 
+        copyMsg.classList.remove("active");
     }, 2000);
 };
 
-function shufflePassword(array){
+function shufflePassword(array) {
     // fisher yates method
-    for(let i = array.length - 1; i > 0; i--){
+    for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         const temp = array[i];
         array[i] = array[j];
@@ -98,13 +103,13 @@ function shufflePassword(array){
 function handleCheckBoxChange() {
     checkCount = 0;
     allCheckBox.forEach((checkBox) => {
-        if(checkBox.checked){
+        if (checkBox.checked) {
             checkCount++;
         }
     });
 
     // special condition
-    if(passwordLength < checkCount){
+    if (passwordLength < checkCount) {
         passwordLength = checkCount;
         handleSlider();
     }
@@ -120,17 +125,17 @@ inputSlider.addEventListener('input', (e) => {
 });
 
 copyBtn.addEventListener('click', () => {
-    if(passwordDisplay.value){
+    if (passwordDisplay.value) {
         copyContent();
     }
-}); 
+});
 
 generateBtn.addEventListener('click', () => {
 
     // none of checkbox selected
-    if(checkCount <= 0) return;
+    if (checkCount <= 0) return;
 
-    if(passwordLength < checkCount){
+    if (passwordLength < checkCount) {
         passwordLength = checkCount;
         handleSlider();
     }
@@ -141,22 +146,22 @@ generateBtn.addEventListener('click', () => {
     password = "";
 
     let funcArr = [];
-    if(uppercaseCheck.checked)
+    if (uppercaseCheck.checked)
         funcArr.push(generateUpperCase);
-    if(lowercaseCheck.checked)
+    if (lowercaseCheck.checked)
         funcArr.push(generateLowerCase);
-    if(numbersCheck.checked)
+    if (numbersCheck.checked)
         funcArr.push(generateRandomNumber);
-    if(symbolsCheck.checked)
+    if (symbolsCheck.checked)
         funcArr.push(generateSymbol);
 
     // compulsory addition
-    for(let i = 0; i < funcArr.length; i++){
+    for (let i = 0; i < funcArr.length; i++) {
         password += funcArr[i]();
     }
 
     // remaining addition
-    for(let i = 0; i < passwordLength - funcArr.length; i++) {
+    for (let i = 0; i < passwordLength - funcArr.length; i++) {
         let randomIndex = getRndInteger(0, funcArr.length);
         password += funcArr[randomIndex]();
     }
@@ -166,6 +171,8 @@ generateBtn.addEventListener('click', () => {
 
     // show password
     passwordDisplay.value = password;
+    passwordDisplay.style.color = "yellow";
+    passwordDisplay.style.fontSize = "2rem";
 
     // calc strength
     calcStrength();
